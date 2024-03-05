@@ -13,40 +13,49 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "./components/ui/textarea"
+import environment from "./environment.ts"
  
 const formSchema = z.object({
-  username: z.string().min(2).max(50),
+  name: z.string().min(2).max(50),
   email: z.string(),
   message: z.string().max(500)
 })
 
 function Forms(){
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       message: ""
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    if (values) console.log(values)
-    // Do something with the form values.
-    // This will be type-safe and validated.
+  function save(values: z.infer<typeof formSchema>) {
+    if (values) {
+      fetch(`http://localhost:8080/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer 902bf55f-75ea-4f49-b259-f59f1db4a207'
+        },
+        body:   JSON.stringify(values)
+      })
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(save)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="name"
           render={({ field }: any) => (
             <FormItem>
               <FormLabel>Your Name</FormLabel>
               <FormControl>
-                <Input placeholder="José Luiz" {...field}/>
+                <Input placeholder="Alice or Bob" {...field}/>
               </FormControl>
               <FormDescription>
                 Show me who you are.
@@ -62,7 +71,7 @@ function Forms(){
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Jose123@gmail.com" {...field}/>
+                <Input placeholder="example@gmail.com" {...field}/>
               </FormControl>
               <FormDescription>
                 I'll know who you are.
@@ -78,7 +87,7 @@ function Forms(){
               <FormLabel>Message</FormLabel>
               <FormControl>
               <Textarea
-                  placeholder="Type something"
+                  placeholder="Write a message for me"
                   className="h-40 resize-none"
                   {...field}/>
               </FormControl>
