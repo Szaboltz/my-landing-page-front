@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "./components/ui/textarea"
-import environment from "./environment.ts"
+import environment from "./env/environment.ts"
  
 const formSchema = z.object({
   name: z.string().min(2).max(50),
