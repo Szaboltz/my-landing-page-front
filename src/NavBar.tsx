@@ -1,16 +1,10 @@
-import {
-  Card,
-  CardContent
-} from "@/components/ui/card";
 import NavContent from "./NavContent";
 
 function NavBar() {
   return(
-    <Card className="rounded-*">
-      <CardContent className="p-2">
-        <NavContent></NavContent>
-      </CardContent>
-    </Card>
+    <div className="h-16 flex items-center justify-end bg-black">
+      <NavContent></NavContent>
+    </div>
   );
 }
 

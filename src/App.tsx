@@ -5,12 +5,10 @@ import Content from './Content'
 function App() {
 
   return (
-    <div className='p-6 max-w-7xl mx-auto'>
-      <div>
-        <NavBar></NavBar>
-        <Banner></Banner>
-        <Content></Content>
-      </div>
+    <div className='font-sans'>
+      <NavBar></NavBar>
+      <Banner></Banner>
+      <Content></Content>
     </div>
   )
 }
