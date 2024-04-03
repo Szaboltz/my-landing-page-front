@@ -7,6 +7,7 @@ function NavContent() {
       name: "Linkedin",
       href: "https://www.linkedin.com/in/henrique-szabo-741797256/",
     },
+    { name: "CV", href: "?#" },
     { name: "Contact me", href: "?#" },
   ];
   return (

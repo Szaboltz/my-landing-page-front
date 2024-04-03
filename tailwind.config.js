@@ -20,7 +20,7 @@ module.exports = {
       colors: {
         'my-green': '#00bf63',
         'my-blue': '#5271ff',
-        'my-grey': '#dcd9d3'
+        'my-grey': '#222222'
       },
       keyframes: {
         "accordion-down": {
