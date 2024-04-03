@@ -1,0 +1,22 @@
+.highlight {
+  background-color: yellow;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.highlight::after {
+  content: '\1F4DC'; /* Unicode character for icon, you can replace this with your desired icon */
+  margin-left: 5px; /* Adjust as needed */
+  font-size: 1.2em; /* Adjust as needed */
+}
+
+.fit-img {
+  height: 400px;
+  width: 400px;
+  border-radius: .375rem;
+  transform: rotate(5deg);
+}
+
+.about-me {
+  height: 500px;
+}

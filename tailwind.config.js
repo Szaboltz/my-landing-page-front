@@ -19,7 +19,8 @@ module.exports = {
     extend: {
       colors: {
         'my-green': '#00bf63',
-        'my-blue': '#5271ff'
+        'my-blue': '#5271ff',
+        'my-grey': '#dcd9d3'
       },
       keyframes: {
         "accordion-down": {
