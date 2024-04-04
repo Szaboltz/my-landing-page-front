@@ -1,21 +1,31 @@
 import NavBar from "./NavBar";
+import './App.css'
 
 function Banner() {
-  const content: any[] = [
-    {
-      text: `Hello, I'm Henrique Szabo, a Java full stack developer who will change the world with you`,
-    },
-  ];
-
   return (
     <div className="font-sans flex-col flex justify-between bg-black h-screen text-white">
       <NavBar></NavBar>
-      <div className="flex h-1/2 justify-center text-center items-center text-5xl">
-        <p>
-          <span className="text-my-green">"</span>
-          {content[0].text}
-          <span className="text-my-green">"</span>👋
-        </p>
+      <div className="flex h-1/2 flex-col justify-center items-center">
+        <div>
+          <span className="text-3xl">Hello,</span>
+          <h1 className="text-5xl mt-2 font-bold">I'm Henrique Szabo.</h1>
+          <p className="my-4 leading-8 text-lg">
+            I'm a full stack software engineer specializing in <span className="bg-my-highlight border-my-border code">Java</span>
+            , <span className="bg-my-highlight border-my-border code">Javascript</span> & <span className="bg-my-highlight border-my-border code">Typescript</span>
+          </p>
+          <p className="my-4 leading-8 text-lg">
+            My motivation is to provide solutions to world problems through
+            programming.
+          </p>
+          <p className="my-4 leading-4 text-lg">
+            I have some technology articles published and professional projects
+            I'm working on that you can check out on my social media channels
+            above.
+          </p>
+          <p className="my-4 leading-4 text-lg">
+            Feel free to send me a message. Make it simple.👋
+          </p>
+        </div>
       </div>
       <div className="flex justify-end text-xl font-medium">
         <p className="mr-8 mb-5">
