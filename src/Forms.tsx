@@ -17,7 +17,7 @@ import environment from "./env/environment.ts"
  
 const formSchema = z.object({
   name: z.string().min(2).max(50),
-  email: z.string(),
+  email: z.string().email(),
   message: z.string().max(500)
 })
 
@@ -40,7 +40,7 @@ function Forms(){
           'Content-Type': 'application/json',
           'Authorization': 'Bearer 902bf55f-75ea-4f49-b259-f59f1db4a207'
         },
-        body:   JSON.stringify(values)
+        body: JSON.stringify(values)
       })
     }
   }
