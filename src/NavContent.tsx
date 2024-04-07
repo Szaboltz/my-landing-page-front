@@ -13,6 +13,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import environment from "./env/environment";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { useToast } from "@/components/ui/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 
 function NavContent() {
   const links: any[] = [
@@ -31,6 +35,9 @@ function NavContent() {
     message: "",
   });
 
+  const [showToast, setShowToast] = useState(false);
+  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [messageError, setMessageError] = useState(false);
@@ -72,23 +79,49 @@ function NavContent() {
     return emailRegex.test(email);
   };
 
-  const save = () => {
-    // Verificar se os campos estão vazios antes de salvar 
-    if (formData) {
-      if (nameError || emailError || messageError) {
-        console.log('Não salvar')
-      } else {
-        fetch(`http://localhost:8080/api/send`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer 902bf55f-75ea-4f49-b259-f59f1db4a207",
-          },
-          body: JSON.stringify(formData),
+  const save = async (event: any) => {
+    let toSafe: boolean = true;
+    event.preventDefault();
+
+    if (
+      formData.email.length <= 0 ||
+      formData.name.length <= 0 ||
+      formData.message.length <= 0
+    ) {
+      console.log("Não salvar Branco");
+      toSafe = false;
+    }
+
+    if (nameError || emailError || messageError) {
+      console.log("Não salvar erro");
+      toSafe = false;
+    }
+
+    if (toSafe) {
+      setIsLoading(true)
+      await fetch(`${environment.url}/api/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response: any) => {
+          return response.json();
+        })
+        .then((data: any) => {
+          setFormData({
+            name: "",
+            email: "",
+            message: ""
+          })
+          console.log(data);
+          setShowToast(true)
+          setIsLoading(false)
+        })
+        .catch((error: any) => {
+          console.error("Error:", error);
         });
-      }
-    } else {
-      console.log('Não salvar')
     }
   };
 
@@ -119,10 +152,8 @@ function NavContent() {
         <Dialog>
           <li>
             <DialogTrigger>
-              <Button variant="ghost" asChild>
-                <a className="font-medium text-base">
-                  {links[3].name}
-                </a>
+              <Button variant="ghost" className="font-medium text-base">
+                {links[3].name}
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -184,18 +215,26 @@ function NavContent() {
                       Close
                     </Button>
                   </DialogClose>
-                  <Button type="submit">Send</Button>
+                  {isLoading ? (
+                    <Button disabled>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </Button>
+                  ) : (<Button type="submit" onClick={() => {  // Exibir toast somente quando menssagem enviada 
+                    toast({
+                      title: "Message send sucefully",
+                      description: "Thank you so much!"
+                    })
+                  }}>Send</Button>)}
                 </DialogFooter>
               </form>
             </DialogContent>
           </li>
         </Dialog>
       </ul>
+      <Toaster />
     </div>
   );
 }
 
 export default NavContent;
-function setNameError(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}

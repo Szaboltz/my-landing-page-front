@@ -1,5 +1,5 @@
 import NavBar from "./NavBar";
-import './App.css'
+import "./App.css";
 
 function Banner() {
   return (
@@ -10,8 +10,15 @@ function Banner() {
           <span className="text-3xl">Hello,</span>
           <h1 className="text-5xl mt-2 font-bold">I'm Henrique Szabo.</h1>
           <p className="my-4 leading-8 text-lg">
-            I'm a full stack software engineer specializing in <span className="bg-my-highlight border-my-border code">Java</span>
-            , <span className="bg-my-highlight border-my-border code">Javascript</span> & <span className="bg-my-highlight border-my-border code">Typescript</span>
+            I'm a full stack software engineer specializing in{" "}
+            <span className="bg-my-highlight border-my-border code">Java</span>,{" "}
+            <span className="bg-my-highlight border-my-border code">
+              Javascript
+            </span>{" "}
+            &{" "}
+            <span className="bg-my-highlight border-my-border code">
+              Typescript
+            </span>
           </p>
           <p className="my-4 leading-8 text-lg">
             My motivation is to provide solutions to world problems through
