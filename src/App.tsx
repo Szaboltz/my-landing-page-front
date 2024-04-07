@@ -1,12 +1,7 @@
-import Banner from './Banner'
+import Banner from "./Banner";
 
 function App() {
-
-  return (
-    <>
-      <Banner></Banner>
-    </>
-  )
+  return <Banner></Banner>;
 }
 
-export default App
+export default App;
