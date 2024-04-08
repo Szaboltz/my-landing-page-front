@@ -15,8 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import environment from "./env/environment";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { useToast } from "@/components/ui/use-toast"
-import { Toaster } from "@/components/ui/toaster"
+import toast, { Toaster } from "react-hot-toast";
 
 function NavContent() {
   const links: any[] = [
@@ -35,8 +34,7 @@ function NavContent() {
     message: "",
   });
 
-  const [showToast, setShowToast] = useState(false);
-  const { toast } = useToast()
+  const [emptyData, setEmptyData] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -55,6 +53,7 @@ function NavContent() {
       } else {
         setNameError(false);
       }
+      if (value.length > 0) setEmptyData(false)
     }
 
     if (name == "email") {
@@ -63,6 +62,7 @@ function NavContent() {
       } else {
         setEmailError(false);
       }
+      if (value.length > 0) setEmptyData(false)
     }
 
     if (name == "message") {
@@ -71,6 +71,7 @@ function NavContent() {
       } else {
         setMessageError(false);
       }
+      if (value.length > 0) setEmptyData(false)
     }
   };
 
@@ -88,40 +89,58 @@ function NavContent() {
       formData.name.length <= 0 ||
       formData.message.length <= 0
     ) {
-      console.log("Não salvar Branco");
       toSafe = false;
+      setEmptyData(true);
+      toast.error("Fill in the required fields (*)", {
+        duration: 3000,
+      });
     }
 
     if (nameError || emailError || messageError) {
-      console.log("Não salvar erro");
       toSafe = false;
+      toast.error("There are fields with incorrect entries.", {
+        duration: 3000,
+      });
     }
 
     if (toSafe) {
-      setIsLoading(true)
-      await fetch(`${environment.url}/api/send`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-        .then((response: any) => {
-          return response.json();
-        })
-        .then((data: any) => {
+      setIsLoading(true);
+      try {
+        await fetch(`${environment.url}/api/send`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }).then((response: any) => {
+          if (!response.ok) {
+            toast.error(
+              "Failed to send message. Please check your network connection.",
+              {
+                duration: 3000,
+              }
+            );
+            throw new Error('Network response was not ok.');
+          }
           setFormData({
             name: "",
             email: "",
-            message: ""
-          })
-          console.log(data);
-          setShowToast(true)
-          setIsLoading(false)
-        })
-        .catch((error: any) => {
-          console.error("Error:", error);
+            message: "",
+          });
+          setIsLoading(false);
+          toast.success("Message send sucefully", {
+            duration: 3000,
+          });
         });
+      } catch (e) {
+        setIsLoading(false);
+        toast.error(
+          "Failed to send message. Please check your network connection.",
+          {
+            duration: 3000,
+          }
+        );
+      }
     }
   };
 
@@ -163,7 +182,9 @@ function NavContent() {
               </DialogHeader>
               <form onSubmit={save} className="space-y-6">
                 <div>
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">
+                    Name <span className="text-xs text-red-600">*</span>
+                  </Label>
                   <Input
                     type="text"
                     id="name"
@@ -177,9 +198,16 @@ function NavContent() {
                       Name must be at least 3 characters
                     </span>
                   )}
+                  {emptyData && formData.name.length == 0 && (
+                    <span className="text-xs text-red-600">
+                      Fill in this field
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">
+                    Email <span className="text-xs text-red-600">*</span>
+                  </Label>
                   <Input
                     type="email"
                     id="email"
@@ -193,9 +221,16 @@ function NavContent() {
                       Email must be valid
                     </span>
                   )}
+                  {emptyData && formData.email.length == 0 && (
+                    <span className="text-xs text-red-600">
+                      Fill in this field
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="message">Message</Label>
+                  <Label htmlFor="message">
+                    Message <span className="text-xs text-red-600">*</span>
+                  </Label>
                   <Textarea
                     id="message"
                     name="message"
@@ -208,6 +243,11 @@ function NavContent() {
                       Message must be at least 3 characters
                     </span>
                   )}
+                  {emptyData && formData.message.length == 0 && (
+                    <span className="text-xs text-red-600">
+                      Fill in this field
+                    </span>
+                  )}
                 </div>
                 <DialogFooter>
                   <DialogClose>
@@ -217,15 +257,12 @@ function NavContent() {
                   </DialogClose>
                   {isLoading ? (
                     <Button disabled>
-                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    Please wait
-                  </Button>
-                  ) : (<Button type="submit" onClick={() => {  // Exibir toast somente quando menssagem enviada 
-                    toast({
-                      title: "Message send sucefully",
-                      description: "Thank you so much!"
-                    })
-                  }}>Send</Button>)}
+                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </Button>
+                  ) : (
+                    <Button type="submit">Send</Button>
+                  )}
                 </DialogFooter>
               </form>
             </DialogContent>
