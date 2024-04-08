@@ -13,6 +13,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import environment from "./env/environment";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import toast, { Toaster } from "react-hot-toast";
 
 function NavContent() {
   const links: any[] = [
@@ -31,6 +34,8 @@ function NavContent() {
     message: "",
   });
 
+  const [emptyData, setEmptyData] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [messageError, setMessageError] = useState(false);
@@ -48,6 +53,7 @@ function NavContent() {
       } else {
         setNameError(false);
       }
+      if (value.length > 0) setEmptyData(false)
     }
 
     if (name == "email") {
@@ -56,6 +62,7 @@ function NavContent() {
       } else {
         setEmailError(false);
       }
+      if (value.length > 0) setEmptyData(false)
     }
 
     if (name == "message") {
@@ -64,6 +71,7 @@ function NavContent() {
       } else {
         setMessageError(false);
       }
+      if (value.length > 0) setEmptyData(false)
     }
   };
 
@@ -72,23 +80,67 @@ function NavContent() {
     return emailRegex.test(email);
   };
 
-  const save = () => {
-    // Verificar se os campos estão vazios antes de salvar 
-    if (formData) {
-      if (nameError || emailError || messageError) {
-        console.log('Não salvar')
-      } else {
-        fetch(`http://localhost:8080/api/send`, {
+  const save = async (event: any) => {
+    let toSafe: boolean = true;
+    event.preventDefault();
+
+    if (
+      formData.email.length <= 0 ||
+      formData.name.length <= 0 ||
+      formData.message.length <= 0
+    ) {
+      toSafe = false;
+      setEmptyData(true);
+      toast.error("Fill in the required fields (*)", {
+        duration: 3000,
+      });
+    }
+
+    if (nameError || emailError || messageError) {
+      toSafe = false;
+      toast.error("There are fields with incorrect entries.", {
+        duration: 3000,
+      });
+    }
+
+    if (toSafe) {
+      setIsLoading(true);
+      try {
+        await fetch(`${environment.url}/api/send`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer 902bf55f-75ea-4f49-b259-f59f1db4a207",
           },
           body: JSON.stringify(formData),
+        }).then((response: any) => {
+          if (!response.ok) {
+            toast.error(
+              "Failed to send message. Please check your network connection.",
+              {
+                duration: 3000,
+              }
+            );
+            throw new Error('Network response was not ok.');
+          }
+          setFormData({
+            name: "",
+            email: "",
+            message: "",
+          });
+          setIsLoading(false);
+          toast.success("Message send sucefully", {
+            duration: 3000,
+          });
         });
+      } catch (e) {
+        setIsLoading(false);
+        toast.error(
+          "Failed to send message. Please check your network connection.",
+          {
+            duration: 3000,
+          }
+        );
       }
-    } else {
-      console.log('Não salvar')
     }
   };
 
@@ -119,10 +171,8 @@ function NavContent() {
         <Dialog>
           <li>
             <DialogTrigger>
-              <Button variant="ghost" asChild>
-                <a className="font-medium text-base">
-                  {links[3].name}
-                </a>
+              <Button variant="ghost" className="font-medium text-base">
+                {links[3].name}
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -132,7 +182,9 @@ function NavContent() {
               </DialogHeader>
               <form onSubmit={save} className="space-y-6">
                 <div>
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">
+                    Name <span className="text-xs text-red-600">*</span>
+                  </Label>
                   <Input
                     type="text"
                     id="name"
@@ -146,9 +198,16 @@ function NavContent() {
                       Name must be at least 3 characters
                     </span>
                   )}
+                  {emptyData && formData.name.length == 0 && (
+                    <span className="text-xs text-red-600">
+                      Fill in this field
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">
+                    Email <span className="text-xs text-red-600">*</span>
+                  </Label>
                   <Input
                     type="email"
                     id="email"
@@ -162,9 +221,16 @@ function NavContent() {
                       Email must be valid
                     </span>
                   )}
+                  {emptyData && formData.email.length == 0 && (
+                    <span className="text-xs text-red-600">
+                      Fill in this field
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="message">Message</Label>
+                  <Label htmlFor="message">
+                    Message <span className="text-xs text-red-600">*</span>
+                  </Label>
                   <Textarea
                     id="message"
                     name="message"
@@ -177,6 +243,11 @@ function NavContent() {
                       Message must be at least 3 characters
                     </span>
                   )}
+                  {emptyData && formData.message.length == 0 && (
+                    <span className="text-xs text-red-600">
+                      Fill in this field
+                    </span>
+                  )}
                 </div>
                 <DialogFooter>
                   <DialogClose>
@@ -184,18 +255,23 @@ function NavContent() {
                       Close
                     </Button>
                   </DialogClose>
-                  <Button type="submit">Send</Button>
+                  {isLoading ? (
+                    <Button disabled>
+                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </Button>
+                  ) : (
+                    <Button type="submit">Send</Button>
+                  )}
                 </DialogFooter>
               </form>
             </DialogContent>
           </li>
         </Dialog>
       </ul>
+      <Toaster />
     </div>
   );
 }
 
 export default NavContent;
-function setNameError(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
