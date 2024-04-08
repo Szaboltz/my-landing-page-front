@@ -15,8 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import environment from "./env/environment";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { useToast } from "@/components/ui/use-toast"
-import { Toaster } from "@/components/ui/toaster"
+import toast, { Toaster } from 'react-hot-toast'; 
 
 function NavContent() {
   const links: any[] = [
@@ -35,8 +34,6 @@ function NavContent() {
     message: "",
   });
 
-  const [showToast, setShowToast] = useState(false);
-  const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -98,7 +95,7 @@ function NavContent() {
     }
 
     if (toSafe) {
-      setIsLoading(true)
+      setIsLoading(true);
       await fetch(`${environment.url}/api/send`, {
         method: "POST",
         headers: {
@@ -113,11 +110,11 @@ function NavContent() {
           setFormData({
             name: "",
             email: "",
-            message: ""
-          })
+            message: "",
+          });
           console.log(data);
-          setShowToast(true)
-          setIsLoading(false)
+          setIsLoading(false);
+          toast.success('Message send sucefully')
         })
         .catch((error: any) => {
           console.error("Error:", error);
@@ -217,15 +214,14 @@ function NavContent() {
                   </DialogClose>
                   {isLoading ? (
                     <Button disabled>
-                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    Please wait
-                  </Button>
-                  ) : (<Button type="submit" onClick={() => {  // Exibir toast somente quando menssagem enviada 
-                    toast({
-                      title: "Message send sucefully",
-                      description: "Thank you so much!"
-                    })
-                  }}>Send</Button>)}
+                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </Button>
+                  ) : (
+                    <Button type="submit">
+                      Send
+                    </Button>
+                  )}
                 </DialogFooter>
               </form>
             </DialogContent>
