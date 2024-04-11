@@ -24,7 +24,7 @@ function NavContent() {
       name: "Linkedin",
       href: "https://www.linkedin.com/in/henrique-szabo-741797256/",
     },
-    { name: "CV", href: "https://drive.google.com/uc?export=download&id=1YALuuSPuHHE5aI27x3s0fKk2duHLi4nT" },
+    { name: "CV", href: environment.pdf },
     { name: "Contact me", href: "?#" },
   ];
 
@@ -145,7 +145,7 @@ function NavContent() {
   };
 
   return (
-    <div className="text-white mr-8">
+    <div className="text-white sm:mr-8">
       <ul className="flex gap-2">
         <li>
           <Button variant="ghost" asChild>
@@ -163,11 +163,7 @@ function NavContent() {
         </li>
         <li>
           <Button variant="ghost" asChild>
-            <a
-              className="font-medium text-base"
-              download={environment.pdf_name}
-              href={links[2].href}
-            >
+            <a className="font-medium text-base" href={links[2].href}>
               {links[2].name}
             </a>
           </Button>
@@ -254,11 +250,6 @@ function NavContent() {
                   )}
                 </div>
                 <DialogFooter>
-                  <DialogClose>
-                    <Button type="button" variant="outline">
-                      Close
-                    </Button>
-                  </DialogClose>
                   {isLoading ? (
                     <Button disabled>
                       <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
