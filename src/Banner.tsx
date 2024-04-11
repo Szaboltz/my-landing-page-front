@@ -36,8 +36,7 @@ function Banner() {
       </div>
       <div className="flex text-lg justify-center sm:justify-end sm:text-xl font-medium">
         <p className="sm:mr-8 sm:mb-5">
-          <span className="text-my-green">szabo@szabo-computer</span>:
-          <span className="text-my-blue">~</span>$ touch coffe.txt
+          <span className="text-my-green">szabo@szabo-computer</span>:<span className="text-my-blue">~</span>$ touch coffe.txt
         </p>
       </div>
     </div>
