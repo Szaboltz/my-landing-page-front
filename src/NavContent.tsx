@@ -105,7 +105,7 @@ function NavContent() {
     if (toSafe) {
       setIsLoading(true);
       try {
-        await fetch(`${environment.url}/api/send`, {
+        await fetch(`${environment.url}api/send`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
